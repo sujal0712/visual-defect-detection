@@ -1,0 +1,16 @@
+# Ignore raw data and datasets
+data/
+
+# Ignore trained models and weights
+saved_weights/
+
+# Standard Python ignores (Highly Recommended)
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+venv/
+env/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
