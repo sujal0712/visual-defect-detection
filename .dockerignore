@@ -1,0 +1,44 @@
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local virtual environments
+venv/
+.venv/
+env/
+
+# Git files
+.git/
+.gitignore
+
+# IDE files
+.vscode/
+.idea/
+
+# Training datasets — exclude if the API does not need them
+dataset/
+datasets/
+data/train/
+data/val/
+data/test/
+
+# Training outputs
+runs/
+outputs/
+checkpoints/
+logs/
+
+# Temporary/uploaded files
+uploads/
+temp/
+tmp/
+
+# Notebook checkpoints
+.ipynb_checkpoints/
+
+# Environment secrets
+.env
+
+# Documentation
+README.md

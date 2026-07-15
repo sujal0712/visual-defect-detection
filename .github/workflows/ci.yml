@@ -1,0 +1,33 @@
+name: AI API Automated Tests
+
+# 1. When should this robot run?
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+# 2. What should the robot do?
+jobs:
+  test-api:
+    runs-on: ubuntu-latest # Rent a temporary Ubuntu Linux machine
+
+    steps:
+    - name: 📥 Download Code from GitHub
+      uses: actions/checkout@v4
+
+    - name: 🐍 Install Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip' # Speeds up installation
+
+    - name: 📦 Install Libraries
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+
+    - name: 🧪 Run Automated Tests
+      run: |
+        pytest
