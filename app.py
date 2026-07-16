@@ -6,6 +6,7 @@ from torchvision import transforms
 from PIL import Image
 import io
 from src.models.model import get_model
+import time
 
 # 1. Initialize the Web App
 app = FastAPI(title="Structural Defect Detection API", version="1.0")
@@ -31,35 +32,44 @@ classes = ['Negative (No Crack)', 'Positive (Crack Detected)']
 # 4. Create the main Prediction Endpoint
 @app.post("/predict/")
 async def predict_defect(file: UploadFile = File(...)):
-    # Read the raw image bytes sent over the internet
+    start_time = time.perf_counter()
+
     image_bytes = await file.read()
-    
-    # SAFETY NET: Try to open the file as an image. If it fails, return a 400 Error.
+
     try:
-        image = Image.open(io.BytesIO(image_bytes)).convert('RGB')
+        image = Image.open(
+            io.BytesIO(image_bytes)
+        ).convert("RGB")
+
     except Exception:
         raise HTTPException(
-            status_code=400, 
+            status_code=400,
             detail="Invalid file format. Please upload a valid image (JPEG/PNG)."
         )
-    
-    # Process the image for the neural network
-    input_tensor = transform(image).unsqueeze(0)
-    
-    # Run the AI inspection
+
+    input_tensor = transform(image).unsqueeze(0).to(device)
+
     with torch.no_grad():
         output = model(input_tensor)
         probabilities = F.softmax(output, dim=1)
-        confidence, predicted_class = torch.max(probabilities, 1)
-        
+
+        confidence, predicted_class = torch.max(
+            probabilities,
+            dim=1
+        )
+
     result = classes[predicted_class.item()]
     conf_score = confidence.item() * 100
-    
-    # Return a clean JSON response
+
+    processing_time_ms = (
+        time.perf_counter() - start_time
+    ) * 1000
+
     return {
         "filename": file.filename,
         "prediction": result,
-        "confidence": f"{conf_score:.2f}%"
+        "confidence": round(conf_score, 2),
+        "processing_time_ms": round(processing_time_ms, 2)
     }
 
 # 5. Create a simple health-check endpoint
