@@ -1,0 +1,31 @@
+services:
+  api:
+    image: sujal000007/defect-api:v1
+    container_name: defect-api-prod
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/')"
+        ]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+
+  ui:
+    image: sujal000007/defect-ui:v1
+    container_name: defect-ui-prod
+    ports:
+      - "8506:8501"
+    restart: unless-stopped
+    environment:
+      API_URL: http://api:8000/predict/
+    depends_on:
+      api:
+        condition: service_healthy

@@ -23,9 +23,8 @@ jobs:
     - name: 📦 Install Libraries & Run Unit Tests
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pytest
-
+        python -m pip install -r requirements-dev.txt
+        python -m pytest -v
     - name: 🐳 Validate Docker Compose Build
       run: docker compose build
 
